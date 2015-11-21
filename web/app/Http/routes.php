@@ -16,3 +16,7 @@ Route::get('/', function () {
 });
 
 Route::get('/api', 'ApiController@get');
+
+Route::get('/auth/callback', function (Request $request){
+    return $request->input('access_token'); 
+});
