@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class ChangeNameUniqueKey extends Migration
+class AddNullableToUserIdOnCommits extends Migration
 {
     /**
      * Run the migrations.
@@ -12,9 +12,8 @@ class ChangeNameUniqueKey extends Migration
      */
     public function up()
     {
-        Schema::table('repositories', function (Blueprint $table) {
-            $table->dropUnique('repositories_name_unique');
-            $table->unique('full_name');
+        Schema::table('commits', function (Blueprint $table) {
+            $table->integer('user_id')->unsigned()->nullable()->change();
         });
     }
 
@@ -25,7 +24,7 @@ class ChangeNameUniqueKey extends Migration
      */
     public function down()
     {
-        Schema::table('repositories', function (Blueprint $table) {
+        Schema::table('commits', function (Blueprint $table) {
             //
         });
     }

@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddParentIdToRepository extends Migration
+class CreateTableMarkRepos extends Migration
 {
     /**
      * Run the migrations.
@@ -12,10 +12,9 @@ class AddParentIdToRepository extends Migration
      */
     public function up()
     {
-        Schema::table('repositories', function (Blueprint $table) {
-            $table->integer('parent_id')->unsigned()->nullable();
-
-            $table->foreign('parent_id')->references('id')->on('repositories');
+        Schema::create('mark_repos', function (Blueprint $table) {
+            $table->integer('r_id')->unsigned()->primary();
+            $table->foreign('r_id')->references('id')->on('repositories');
         });
     }
 
@@ -26,6 +25,6 @@ class AddParentIdToRepository extends Migration
      */
     public function down()
     {
-        //
+        Schema::drop('mark_repos');
     }
 }

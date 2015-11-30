@@ -31,6 +31,16 @@ class GetUserName extends Seeder
                 continue;
             }
 
+            if($curl->http_status_code == 404){
+                echo "Deleting user and repos";
+                DB::table('branches')->join('repositories', 'repository_id', '=', 'id')->where('owner_id', $user->id)->delete();
+                DB::table('contributes_to')->join('repositories', 'repository_id', '=', 'id')->where('owner_id', $user->id)->orWhere('user_id', $user->id)->delete();
+                DB::table('mark_repos')->join('repositories', 'r_id', '=', 'id')->where('owner_id', $user->id)->delete();
+                DB::table('repositories')->where('owner_id', $user->id)->delete();
+                $user->delete();
+                continue;
+            }
+
             $remaining_reqs = intval(explode(": ", $curl->response_headers[7])[1]);
             echo $remaining_reqs."\n";
 
@@ -38,9 +48,12 @@ class GetUserName extends Seeder
             $user->save();
 
             if($remaining_reqs < 2){
+                $time = intval(explode(": ", $curl->response_headers[8])[1]);
                 echo "Not enough requests\n";
-                echo "Retry at :".date('l jS \of F Y h:i:s A', intval(explode(": ", $curl->response_headers[8])));
-                break;
+                echo "Retry at :".date('l jS \of F Y h:i:s A', $time)."\n";
+                echo "Sleeping...";
+                sleep($time - time());
+                echo "Awaking...\n";
             }
         }
     }
